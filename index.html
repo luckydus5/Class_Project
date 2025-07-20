@@ -20,16 +20,16 @@
                     <a href="#home" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#about" class="nav-link">About Us</a>
+                    <a href="#about" class="nav-link">About</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#mission" class="nav-link">Our Mission</a>
+                    <a href="#mission" class="nav-link">Mission</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#impact" class="nav-link">Our Impact</a>
+                    <a href="#privacy" class="nav-link">Support</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#team" class="nav-link">Our Team</a>
+                    <a href="#team" class="nav-link">Team</a>
                 </li>
                 <li class="nav-item">
                     <a href="#contact" class="nav-link">Contact</a>
@@ -163,6 +163,47 @@
         </div>
     </section>
 
+    <!-- Privacy & Anonymous Support Section -->
+    <section id="privacy" class="privacy-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Your Privacy is Our Priority</h2>
+                <p>Complete anonymity and confidentiality in mental health support</p>
+            </div>
+            <div class="privacy-content">
+                <div class="privacy-cards">
+                    <div class="privacy-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>100% Anonymous</h3>
+                        <p>No names, no addresses, no personal information required. Your identity remains completely protected.</p>
+                    </div>
+                    <div class="privacy-card">
+                        <i class="fas fa-lock"></i>
+                        <h3>Secure Conversations</h3>
+                        <p>All conversations are encrypted and can be deleted instantly upon your request.</p>
+                    </div>
+                    <div class="privacy-card">
+                        <i class="fas fa-user-secret"></i>
+                        <h3>Safe Space</h3>
+                        <p>Express yourself freely without fear of judgment or identification in our secure environment.</p>
+                    </div>
+                    <div class="privacy-card">
+                        <i class="fas fa-comments"></i>
+                        <h3>24/7 AI Support</h3>
+                        <p>Our friendly AI companion is available anytime to listen and provide mental health guidance.</p>
+                    </div>
+                </div>
+                <div class="chatbot-intro">
+                    <h3>Meet Your Anonymous Mental Health Companion</h3>
+                    <p>Our AI chatbot provides immediate, judgment-free support for mental health concerns. Start a conversation anytime - completely anonymous and confidential.</p>
+                    <button id="startChatBtn" class="btn btn-primary">
+                        <i class="fas fa-comments"></i> Start Anonymous Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Team Section -->
     <section id="team" class="team">
         <div class="container">
@@ -246,7 +287,7 @@
                     <div class="member-info">
                         <h3>Vanessa Nishimwe</h3>
                         <p class="role">In Charge of workbook</p>
-                        <p class="fun-fact">Fun fact: Has organized -2+ community events!</p>
+                        <p class="fun-fact">Fun fact: Has organized 20+ community events!</p>
                         <div class="social-links">
                             <a href="#"><i class="fab fa-linkedin"></i></a>
                             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -333,6 +374,73 @@
         </div>
     </footer>
 
+    <!-- Anonymous Chatbot Widget -->
+    <div id="chatbot-widget" class="chatbot-widget">
+        <div class="chat-header">
+            <div class="chat-title">
+                <i class="fas fa-heart"></i>
+                <span>Anonymous Mental Health Support</span>
+            </div>
+            <div class="chat-controls">
+                <button id="minimizeChat" class="chat-btn"><i class="fas fa-minus"></i></button>
+                <button id="closeChat" class="chat-btn"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        
+        <div class="privacy-notice">
+            <div class="privacy-notice-content">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <h4>Your Privacy is Protected</h4>
+                    <p>This conversation is completely anonymous. We don't collect names, addresses, or personal information.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="bot-message">
+                <div class="message-avatar">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="message-content">
+                    <p>Hello! I'm here to support you with mental health concerns. This conversation is completely anonymous and confidential. How are you feeling today?</p>
+                    <span class="message-time">Just now</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-options" id="chatOptions">
+            <button class="option-btn" data-message="I'm feeling anxious">😰 I'm feeling anxious</button>
+            <button class="option-btn" data-message="I'm feeling sad">😢 I'm feeling sad</button>
+            <button class="option-btn" data-message="I'm stressed about studies">📚 Study stress</button>
+            <button class="option-btn" data-message="I need someone to talk to">💭 Just need to talk</button>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type your message... (completely anonymous)">
+            <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+        <div class="chat-footer">
+            <div class="data-controls">
+                <button id="deleteChat" class="footer-btn">
+                    <i class="fas fa-trash"></i> Delete Conversation
+                </button>
+                <button id="saveChat" class="footer-btn">
+                    <i class="fas fa-save"></i> Save Locally
+                </button>
+            </div>
+            <p class="disclaimer">Conversations can be deleted anytime. No data is stored on our servers.</p>
+        </div>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <button id="chatToggle" class="chat-toggle">
+        <i class="fas fa-comments"></i>
+        <span class="chat-badge">Anonymous Support</span>
+    </button>
+
     <script src="script.js"></script>
+    <script src="chatbot.js"></script>
 </body>
 </html>
