@@ -1,119 +1,387 @@
 class AnonymousChatbot {
     constructor() {
         this.isOpen = false;
+        this.isMinimized = false;
         this.messages = [];
         this.isTyping = false;
+        this.isDragging = false;
+        this.currentSize = 'medium';
         
-        // Enhanced responses with Rwanda/ALU specific context and mental health support
+        // Drag functionality variables
+        this.dragOffset = { x: 0, y: 0 };
+        
+        // Enhanced responses - more answers, shorter, uplifting and comforting
         this.responses = {
             greetings: [
-                "Hello! I'm here to listen and support you. This is a completely safe and anonymous space. How are you feeling today?",
-                "Hi there! Welcome to our anonymous support chat. I'm here to help with any mental health concerns you might have. What's on your mind?",
-                "Hello friend! I'm glad you reached out. This conversation is completely private and anonymous. How can I support you today?",
-                "Welcome! I'm your anonymous mental health companion. Whether you're dealing with stress, anxiety, or just need someone to talk to, I'm here for you. How are you doing?"
+                "Hello! I'm here to listen and support you. This is a safe and anonymous space. How are you feeling today?",
+                "Hi there! Welcome to our anonymous support chat. I'm here to help with any concerns you might have. What's on your mind?",
+                "Hello friend! I'm glad you reached out. This conversation is completely private. How can I support you today?",
+                "Welcome home! I'm your anonymous companion. Whether you're dealing with stress, worry, or just need someone to talk to, I'm here. How are you doing?",
+                "Hi! Thanks for reaching out. This is a judgment-free zone where you can share anything. How are things going for you?",
+                "Hello! I'm here to chat and listen. You're in a safe space. What would you like to talk about?",
+                "Hey there! I'm your anonymous friend. Feel free to share whatever is on your mind. How can I help today?",
+                "Hi! I'm really glad you're here. This is your space to talk freely. What's been going on with you lately?",
+                "Muraho! Welcome to this peaceful space. I'm here for you. How's your heart today?",
+                "Bonjour! You've found a safe harbor here. What's weighing on your mind?"
+            ],
+            anger: [
+                "I hear you're feeling angry. Let's pause and breathe together. In for 4, hold for 4, out for 4. What triggered this feeling?",
+                "Anger is a valid emotion. It tells us something needs attention. Take a deep breath. What's really bothering you underneath?",
+                "You're safe to feel angry here. Let's find a healthy way to express it. What situation made you feel this way?",
+                "I understand you're frustrated. Anger often masks hurt or fear. What's really going on for you?",
+                "Feeling angry is human. You're not bad for feeling this way. What's been building up inside you?",
+                "Let's cool down together. Count backwards from 10 with me: 10, 9, 8... What's making you feel so heated?",
+                "Anger shows you care deeply about something. That's okay. What boundary feels like it's been crossed?",
+                "I hear your frustration. Let's channel this energy constructively. What would help you feel heard right now?",
+                "You're allowed to be angry. Let's work through this together. What's the real issue here?",
+                "Anger is energy that needs direction. Take a moment to breathe. What needs to change in your situation?",
+                "I see you're upset. Your feelings are valid. What would help you feel more in control right now?",
+                "Let's pause and reset. Anger clouds our thinking. What's the core problem you're facing?"
             ],
             anxiety: [
-                "I understand you're feeling anxious, and that takes courage to share. Anxiety affects many students in Rwanda, especially at competitive institutions like ALU. Let's try a breathing exercise: breathe in for 4 counts, hold for 4, breathe out for 4. What specifically is making you feel anxious right now?",
-                "Thank you for trusting me with your feelings. Anxiety can be overwhelming, but you're not alone. Many students across Rwanda and at ALU experience this. It's often related to academic pressure, being away from family, or uncertainty about the future. Can you tell me what triggers these anxious feelings?",
-                "Anxiety is your mind's way of trying to protect you, but sometimes it goes into overdrive. You're safe here. In Rwandan culture, we often keep our worries to ourselves, but sharing them can really help. Would it help to talk about what's causing these anxious thoughts?",
-                "I hear you, and what you're feeling is completely valid. Anxiety doesn't define you. Many successful people, including leaders in Rwanda, have faced similar challenges. Have you noticed any patterns in when you feel most anxious? Sometimes identifying triggers can help us manage them better."
+                "I hear you. Breathe with me: in for 4, hold for 4, out for 4. You're safe here. What's worrying you?",
+                "Anxiety is tough, but you're tougher. Many students feel this way. What's triggering these feelings?",
+                "You're not alone in this. Take a deep breath. What's making you anxious right now?",
+                "I understand. Your feelings are valid. What situation makes you most nervous?",
+                "Breathe, friend. You're stronger than your worries. What's been on your mind?",
+                "Anxiety means you care deeply about something. That's human. What's concerning you?",
+                "You're brave for sharing this. Take it one breath at a time. What's stressing you?",
+                "I'm here with you. You're safe. What specific thing is making you worry?",
+                "Your feelings matter. Breathe slowly. What's been keeping you up at night?",
+                "You've got this. One step at a time. What's making your mind race?",
+                "I hear your heart. You're not alone. What's making you feel overwhelmed?",
+                "Pause, breathe, you're okay. What's been weighing heavily on you?"
             ],
             sadness: [
-                "I'm really sorry you're feeling sad. Your feelings are completely valid, and it's okay to not be okay sometimes. Many students in Rwanda struggle with similar feelings, especially when dealing with academic pressure or being away from family. Would you like to share what's contributing to your sadness?",
-                "Thank you for sharing something so personal with me. Sadness can feel heavy, but talking about it is a brave first step. You're not alone - many students at ALU and across Rwanda experience similar emotions. In our culture, we're taught to be strong, but it's okay to feel vulnerable sometimes. What's been weighing on your heart?",
-                "I can hear the pain in your message, and I want you to know that feeling sad doesn't make you weak. It makes you human. Sometimes life in university, dealing with expectations from family, or feeling homesick can be overwhelming. What's been the hardest part for you lately?",
-                "Sadness is like a storm - it feels intense, but it will pass. You've taken a big step by reaching out. Many students at ALU face similar challenges with homesickness, academic stress, or feeling disconnected. Is there something specific that's been making you feel this way?"
+                "I'm sorry you're hurting. Your feelings are valid. What's been making your heart heavy?",
+                "It's okay to feel sad. You're human. What's been bringing you down?",
+                "I hear your pain. You're not alone. What's been the hardest part?",
+                "Sadness shows you have a caring heart. What's been troubling you?",
+                "I'm here for you. It's okay to not be okay. What's been hurting?",
+                "Your tears are valid. What's been making you feel this way?",
+                "Sending you comfort. You matter. What's been on your heart?",
+                "I see you struggling. You're brave. What's been most difficult?",
+                "It's okay to feel low sometimes. What's been weighing you down?",
+                "You're allowed to be sad. What's been breaking your heart?",
+                "I'm here to listen. Your pain matters. What's been hardest to bear?",
+                "Gentle hugs to you. What's been making you feel empty?"
             ],
             stress: [
-                "Academic stress is incredibly common among students in Rwanda, especially at competitive institutions like ALU. The pressure to succeed, combined with family expectations and financial concerns, can be overwhelming. You're definitely not alone in feeling this way. What aspects of your studies are causing the most pressure right now?",
-                "I hear you about the stress. The pressure to succeed academically can be intense, especially when you're representing your family's hopes and dealing with the competitive environment at ALU. Remember, your worth isn't defined by your grades. What's the biggest source of stress for you right now?",
-                "Study stress affects so many students - you're part of a community dealing with similar challenges. In Rwanda, education is highly valued, which can create additional pressure. Sometimes we put too much pressure on ourselves. Can you tell me more about what's making your studies feel overwhelming?",
-                "Academic pressure is real, especially when you're far from home or dealing with high expectations from family and community. Many ALU students face similar struggles with time management, difficult coursework, or fear of failure. Let's talk about what's making your studies feel most stressful."
+                "School stress is real. You're doing your best. What's putting the most pressure on you?",
+                "Academic pressure is tough. Your worth isn't your grades. What's stressing you most?",
+                "I understand the pressure. Take a breath. What's overwhelming you?",
+                "Study stress affects everyone. What's your biggest challenge right now?",
+                "You're working hard. That matters. What's been most stressful?",
+                "Academic life is demanding. You're managing. What needs attention?",
+                "I hear you about the pressure. What's making things feel too much?",
+                "School can be overwhelming. You're capable. What's your main concern?",
+                "Study stress is exhausting. What's been draining your energy?",
+                "Academic pressure is heavy. What aspect feels most difficult?",
+                "I understand the workload stress. What's been your biggest hurdle?",
+                "School demands a lot. You're strong. What's been most challenging?"
             ],
             depression: [
-                "I'm really grateful you felt comfortable sharing this with me. Depression can make everything feel heavy and meaningless, but please know that these feelings can and do get better. You're not alone - many students struggle with depression, especially when dealing with the pressures of university life. How long have you been feeling this way?",
-                "Thank you for trusting me with something so personal. Depression affects many people, including students in Rwanda. It's not a weakness or a character flaw - it's a real condition that deserves care and support. Sometimes the transition to university life, being away from family, or academic pressure can trigger these feelings. What's been the hardest part of dealing with these feelings?",
-                "I want you to know that reaching out was incredibly brave. Depression can make us feel isolated and hopeless, but you're not alone in this struggle. Many students at ALU and across Rwanda face similar challenges. In our culture, mental health isn't always discussed openly, but your feelings are valid and important. Would you like to talk about what's been going on for you?"
+                "I'm grateful you shared this. You're not alone. How long have you felt this way?",
+                "Thank you for trusting me. These feelings are real. What's been hardest?",
+                "You're brave for reaching out. Many students struggle too. What's going on?",
+                "These feelings are difficult. You matter. What's been most challenging?",
+                "I hear you're struggling. You're not alone. How are you coping?",
+                "You're important. These feelings are temporary. What's been affecting you?",
+                "I understand you're hurting. You're valued. What would help right now?",
+                "This sounds really hard. You're not alone. What's been on your mind?",
+                "I'm glad you felt safe sharing. You matter. What's been most difficult?",
+                "Thank you for trusting me. Many feel this way. What's been affecting you most?",
+                "You're not broken. You're human. What's been weighing on your spirit?",
+                "I see your struggle. You're valuable. What's been hardest to handle?"
             ],
             loneliness: [
-                "Feeling lonely, especially as a student, can be really hard. Many students at ALU feel isolated, whether they're far from home, struggling to make connections, or dealing with the competitive academic environment. You're not alone in feeling this way. What's been making you feel most lonely?",
-                "I hear you, and loneliness is something many students experience, particularly in university settings or when they're away from family. It's brave of you to reach out. Sometimes the people around us are also feeling lonely but hiding it. Being at ALU can sometimes feel isolating despite being surrounded by other students. What's been the hardest part about feeling disconnected from others?",
-                "Loneliness can feel overwhelming, but reaching out here shows you're taking steps to connect. Many students in Rwanda struggle with feeling isolated, especially when they're focused on academics or dealing with homesickness. Would you like to talk about what's making you feel disconnected from others?"
+                "Feeling lonely is hard. You're not alone here. What's been making you feel isolated?",
+                "I hear you. Loneliness hurts. You're connected here. What's been hardest?",
+                "You're not alone in feeling alone. What's been making you feel disconnected?",
+                "Loneliness is painful. You matter. What's been making you feel isolated?",
+                "I understand feeling alone. You're seen here. What's been most difficult?",
+                "You're not the only one feeling this. What's been making you feel lonely?",
+                "Feeling isolated is tough. You're valued here. What's been hardest?",
+                "I hear your loneliness. You're important. What would help you feel connected?",
+                "You're not alone anymore. I'm here. What's been weighing on you?",
+                "Loneliness is real pain. You're worthy of connection. What's been difficult?",
+                "I see you. You matter. What's been making you feel most alone?",
+                "You belong somewhere. What's been making you feel disconnected?"
+            ],
+            happiness: [
+                "That's wonderful! I love hearing good news. What's been making you happy?",
+                "Your joy is contagious! What's been bringing you the most happiness?",
+                "I'm so glad you're feeling good! What's been the highlight recently?",
+                "That's amazing! Happiness looks good on you. What's been going well?",
+                "I love this energy! What's been putting a smile on your face?",
+                "Your happiness matters! What's been the best part of your day?",
+                "That's beautiful! What's been filling your heart with joy?",
+                "I'm smiling with you! What's been making you feel so positive?",
+                "This is lovely to hear! What's been bringing you the most peace?",
+                "Your joy is precious! What's been the source of your happiness?",
+                "That's fantastic! What's been making your heart sing?",
+                "I love hearing this! What's been brightening your days?"
+            ],
+            comfort: [
+                "You're safe here. Take all the time you need. What's on your heart?",
+                "This is your safe space. You're valued. What would help you feel better?",
+                "I'm here for you. You matter deeply. What's been troubling you?",
+                "You're not alone. This is your refuge. What's weighing on you?",
+                "Feel at home here. You're cherished. What's been difficult?",
+                "You're wrapped in care here. What's been on your mind?",
+                "This is your sanctuary. You're loved. What's been challenging?",
+                "You belong here. You're important. What's been hurting?",
+                "Consider this your peaceful place. What's been bothering you?",
+                "You're held with kindness here. What's been heavy on your heart?",
+                "This is your comfort zone. You're precious. What's troubling you?",
+                "You're embraced with warmth here. What's been weighing you down?"
+            ],
+            motivation: [
+                "You're stronger than you think. Every challenge makes you more resilient. Keep going!",
+                "You've survived 100% of your worst days. That's an amazing track record!",
+                "Small steps still move you forward. You're doing better than you think.",
+                "You matter more than you know. Your presence makes a difference.",
+                "Tough times don't last, but tough people like you do. You've got this!",
+                "You're writing your story. Every chapter, even difficult ones, matters.",
+                "You're more capable than your challenges. Keep believing in yourself.",
+                "Progress isn't always visible, but you're growing every day.",
+                "You're exactly where you need to be. Trust your journey.",
+                "Your potential is limitless. Don't let temporary feelings define you.",
+                "You're a warrior, not a worrier. You've overcome before, you will again.",
+                "Every sunset gives way to sunrise. Your difficult times will pass too."
+            ],
+            selfcare: [
+                "What brings you joy? Music, books, walks, food? Do something that feeds your soul today.",
+                "Your wellbeing matters. Have you eaten today? Stayed hydrated? Rested enough?",
+                "Self-care isn't selfish. What's one small thing you can do for yourself right now?",
+                "You deserve kindness, especially from yourself. How can you be gentle with yourself today?",
+                "What makes you feel peaceful? Nature, music, art, prayer? Make time for it.",
+                "Your body and mind need care. What would nurture you right now?",
+                "You're important. When did you last do something just because it made you happy?",
+                "Treat yourself like you would a dear friend. What would you tell them to do?",
+                "What fills your cup? Reading, cooking, dancing, singing? Do more of that.",
+                "You matter. What's one way you can show yourself love today?",
+                "Self-care is health care. What would make you feel better right now?",
+                "You deserve good things. What small pleasure can you give yourself today?"
+            ],
+            connection: [
+                "Who makes you feel loved? Reach out to them when you can. You deserve connection.",
+                "You're not meant to carry everything alone. Who can you lean on?",
+                "Your family and friends care about you. When did you last connect with them?",
+                "You belong to a community, even when it doesn't feel like it. Who values you?",
+                "Someone is thinking about you right now. You matter to people.",
+                "Your presence is a gift to others. Who appreciates having you in their life?",
+                "You're loved more than you know. Who can you share your feelings with?",
+                "Connection heals. Who makes you feel understood and accepted?",
+                "You're part of something bigger. Who reminds you that you belong?",
+                "Your story matters to others. Who listens when you need to talk?",
+                "You're not invisible. Who sees and values the real you?",
+                "Love surrounds you, even when you can't feel it. Who cares about you?"
+            ],
+            hope: [
+                "This feeling is temporary. You've gotten through hard times before, you will again.",
+                "Tomorrow offers new possibilities. Your story isn't over yet.",
+                "You've survived every difficult day so far. That shows incredible strength.",
+                "Things can change in an instant. Hold onto hope, even if it's tiny.",
+                "You're stronger than this moment. Better days are coming.",
+                "This too shall pass. You've weathered storms before.",
+                "Your future self will thank you for not giving up today.",
+                "Every difficult season eventually gives way to growth and renewal.",
+                "You're more resilient than you realize. Keep going, one moment at a time.",
+                "Hope is always present, even when hidden. It's there for you.",
+                "Your life has value and purpose, even when it's hard to see.",
+                "Healing happens gradually, then suddenly. Trust the process."
             ],
             academic: [
-                "Academic challenges are tough, and they're even harder when they affect your mental health. Many students at ALU face similar struggles with difficult coursework, time management, or fear of failure. Remember, asking for help is a sign of strength, not weakness. What specific academic concerns are weighing on you?",
-                "I understand how academic pressure can feel overwhelming. The standards at ALU are high, and combined with family expectations and financial investment in your education, it can feel like a lot. Your struggles are valid, and many of your peers are facing similar challenges. What aspects of your academic life are causing you the most stress right now?",
-                "Academic difficulties can really impact our mental health, especially in a competitive environment like ALU. You're not alone in this - many students across Rwanda deal with similar pressures. Whether it's specific subjects, study habits, or exam anxiety, these challenges are common. Would you like to talk about what's been most challenging academically?"
+                "Academic challenges are tough but temporary. You're more than your grades. What's stressing you?",
+                "School pressure is real. You're doing your best. What's the biggest challenge?",
+                "Your education matters, but so does your wellbeing. What's overwhelming you?",
+                "Academic struggles don't define you. You're capable. What needs attention?",
+                "School stress affects everyone. You're not alone. What's most difficult?",
+                "Your worth isn't measured by grades. You matter. What's concerning you?",
+                "Academic pressure can be crushing. Take a breath. What's hardest right now?",
+                "School is challenging for everyone. You're managing. What's stressing you most?",
+                "Your effort matters more than perfection. What's been your biggest worry?",
+                "Academic life is demanding. You're strong. What aspect is hardest?",
+                "School stress is exhausting. You're doing well. What's overwhelming you?",
+                "Your academic journey is unique. What's been most challenging lately?"
             ],
             family: [
-                "Family relationships can be complex, especially when you're at university and trying to balance their expectations with your own goals and mental health. Many students in Rwanda face pressure from family to succeed academically while also dealing with homesickness. What's been most challenging with your family situation?",
-                "Family dynamics can significantly impact our mental health. Thank you for sharing this with me. Many students struggle with balancing family expectations, especially in Rwandan culture where family honor and success are very important. Sometimes the pressure to make your family proud can feel overwhelming. Would you like to talk about what's been most difficult?",
-                "I hear you about family challenges. These relationships can be both supportive and stressful. Many students at ALU deal with similar family pressures, whether it's about grades, career choices, or living up to expectations. Sometimes being away from family while trying to make them proud creates its own stress. What aspect of your family situation has been weighing on you most?"
+                "Family relationships are complex. You're doing your best. What's been difficult?",
+                "Family expectations can be heavy. You matter too. What's challenging you?",
+                "Family dynamics affect us deeply. Your feelings are valid. What's hardest?",
+                "Balancing family expectations is tough. You're important. What's stressing you?",
+                "Family pressure can be overwhelming. You're enough. What's concerning you?",
+                "Family relationships take work. You're valuable. What's been difficult?",
+                "Family expectations can feel heavy. You're worthy. What's weighing on you?",
+                "Family dynamics can be stressful. You matter. What's been hardest?",
+                "Pleasing family while being yourself is hard. What's challenging you?",
+                "Family relationships are complicated. You're doing well. What's difficult?",
+                "Family pressure affects everyone. You're important. What's stressing you?",
+                "Family expectations can be tough. You're enough as you are. What's hard?"
             ],
             financial: [
-                "Financial stress is a reality for many students, and it can significantly impact mental health. You're not alone in worrying about money while trying to focus on your studies. Many students at ALU face similar challenges with tuition, living expenses, or family financial pressure. How has financial stress been affecting you?",
-                "Money concerns are incredibly stressful, especially when you're trying to focus on your education. Many students in Rwanda face similar financial pressures, whether it's about affording tuition, supporting family, or managing living expenses. Thank you for sharing this concern with me. What's been the most challenging aspect financially?",
-                "I understand how financial worries can consume your thoughts and affect your studies. Education is expensive, and many families make significant sacrifices for their children's university education. This can create additional pressure on students. What specific financial concerns have been weighing on you?"
+                "Money stress is real and valid. You're not alone in this. What's most concerning?",
+                "Financial pressure affects many students. You're managing. What's hardest?",
+                "Money worries are exhausting. You're doing your best. What's stressing you?",
+                "Financial challenges are temporary. You're resourceful. What's most difficult?",
+                "Money stress affects wellbeing. You matter more than money. What's concerning you?",
+                "Financial pressure is real. You're capable. What's been most stressful?",
+                "Money worries keep many awake. You're not alone. What's hardest right now?",
+                "Financial stress affects students everywhere. You're managing. What's difficult?",
+                "Money concerns are valid. You're strong. What's been most challenging?",
+                "Financial pressure can be overwhelming. You're resilient. What's concerning you?",
+                "Money stress is exhausting. You're doing well. What's most difficult?",
+                "Financial challenges test us. You're capable. What's been hardest?"
             ],
             future: [
-                "Worrying about the future is so common among students. The pressure to succeed and uncertainty about career prospects after ALU can be overwhelming. Many of your peers share these concerns about finding good jobs, making family proud, or contributing to Rwanda's development. What aspects of your future feel most uncertain or stressful?",
-                "Future anxiety is something many students experience, especially in competitive environments. Questions about career prospects, whether your degree will lead to good opportunities, or how you'll contribute to your family and community are all valid concerns. What specific future worries have been on your mind lately?",
-                "I understand the uncertainty about what comes after university. Many ALU students worry about whether they'll find good jobs, be able to support their families, or make a meaningful contribution to Rwanda. These are big responsibilities to think about. What aspects of your future feel most overwhelming right now?"
+                "The future feels scary because you care. That's beautiful. What worries you most?",
+                "Future uncertainty is normal. You'll figure it out. What's most concerning?",
+                "Not knowing what's next is human. You're adaptable. What's worrying you?",
+                "Future anxiety affects everyone. You're capable. What's most stressful?",
+                "The unknown future can be overwhelming. You're resilient. What concerns you?",
+                "Future planning is hard when present is difficult. What's worrying you most?",
+                "Uncertainty about tomorrow is natural. You're strong. What's most concerning?",
+                "Future fears are common. You'll navigate whatever comes. What worries you?",
+                "Not having all the answers is okay. You're wise. What's most stressful?",
+                "Future anxiety shows you care about your life. What's concerning you?",
+                "The unknown can be scary. You're braver than you think. What worries you?",
+                "Future uncertainty is part of life. You're capable. What's most difficult?"
             ],
             homesickness: [
-                "Homesickness is so common among university students, especially those studying away from home. Missing family, familiar foods, your community, and the comfort of home is completely natural. Many students at ALU experience this. What do you miss most about home?",
-                "Being away from family and familiar surroundings can be really difficult. Homesickness affects many students, and it's a sign of how much your family and community mean to you. It's okay to feel sad about being away from the people and places you love. How has homesickness been affecting you?",
-                "Missing home is one of the most common challenges students face. Whether it's missing family meals, conversations in your local language, or just the comfort of familiar places, these feelings are completely valid. What aspects of home do you find yourself missing most?"
+                "Missing home shows how much you love your family. What do you miss most?",
+                "Homesickness means you have beautiful connections. What's hardest about being away?",
+                "Missing home is natural when you're away. What do you long for most?",
+                "Home is where the heart is, and yours is full of love. What do you miss?",
+                "Feeling homesick shows your deep family bonds. What's been hardest?",
+                "Missing family means you're loved deeply. What do you miss most about home?",
+                "Homesickness is love across distance. What's been most difficult?",
+                "Missing home comforts is so normal. What do you long for most?",
+                "Home memories are precious when you're away. What do you miss?",
+                "Homesickness shows your beautiful connections. What's been hardest?",
+                "Missing family is love in action. What do you miss most about home?",
+                "Home is always in your heart. What aspects do you miss most?"
             ],
             positive: [
-                "I'm so glad to hear you're feeling better! That's wonderful. What's been helping you feel more positive lately?",
-                "That's fantastic! It's great that you're in a good place right now. What's been going well for you?",
-                "I love hearing that you're doing well! It's important to celebrate these positive moments. What's been bringing you joy lately?",
-                "It's amazing to hear you're feeling good! These positive feelings are just as important to acknowledge as the difficult ones. What's been contributing to your good mood?"
+                "I love hearing good news! Your happiness is contagious. What's going well?",
+                "That's wonderful! Your joy brightens this space. What's been amazing?",
+                "This is beautiful to hear! Share more of what's making you happy!",
+                "Your positivity is a gift! What's been the best part recently?",
+                "I'm smiling with you! What's been bringing you the most joy?",
+                "That's fantastic news! Your happiness matters. What's been wonderful?",
+                "Your good mood is infectious! What's been going so well?",
+                "I love this energy! Keep sharing what's making you feel good!",
+                "That's amazing! Your joy is precious. What's been the highlight?",
+                "This makes my day! What's been filling your heart with happiness?",
+                "Your positivity lights up this space! What's been going beautifully?",
+                "I'm so happy for you! What's been the source of your joy?"
             ],
             general: [
-                "Thank you for reaching out and sharing with me. Your feelings are important and valid. Many students in Rwanda and at ALU face similar challenges. Whether it's academic stress, homesickness, family pressure, or just the general challenges of university life, you're not alone. Can you tell me a bit more about what's been on your mind lately?",
-                "I appreciate you taking the time to connect. Whatever you're going through, you don't have to face it alone. Many students at ALU and across Rwanda deal with similar struggles, from academic pressure to personal challenges. What would be most helpful to talk about right now?",
-                "I'm here to listen and support you through whatever you're experiencing. Your mental health matters, and it's brave of you to reach out. Whether you're dealing with stress, sadness, anxiety, or just need someone to talk to, this is a safe space. What's been weighing on your heart or mind recently?",
-                "Thank you for trusting me with your thoughts. Everyone faces challenges, especially during university years, and it's completely normal to need support sometimes. What's been the most difficult thing you're dealing with right now?"
+                "I'm here for you. Your feelings matter. What's on your heart today?",
+                "Welcome to this safe space. You're valued here. What's on your mind?",
+                "I'm listening with my whole heart. What would you like to share?",
+                "You're not alone. This is your space to be real. What's going on?",
+                "I'm here to support you. Your story matters. What's happening?",
+                "You matter deeply. What's been weighing on your heart lately?",
+                "This is your safe harbor. You're welcomed here. What's on your mind?",
+                "I'm honored you're here. Your feelings are important. What's up?",
+                "You're safe to share anything here. What's been on your heart?",
+                "I see you and value you. What's been going on in your world?",
+                "You belong here. Your story matters. What would you like to talk about?",
+                "I'm here with open arms and ears. What's been on your mind?"
             ],
             encouragement: [
-                "You're showing incredible strength by reaching out and talking about your feelings. That's not always easy to do, especially in a culture where mental health isn't always openly discussed. You should be proud of taking this step toward taking care of yourself.",
-                "I want you to know that seeking help and talking about your mental health shows wisdom and courage. Many successful people, including leaders and innovators in Rwanda, have faced similar challenges and found ways to thrive. You're already on the right path by recognizing your needs.",
-                "Remember, struggling with mental health doesn't make you weak or broken. It makes you human. Many of the brightest minds and kindest hearts have faced similar battles. You're stronger than you know, and seeking support is actually a sign of that strength.",
-                "Taking care of your mental health is just as important as taking care of your physical health or your studies. You're making a smart choice by reaching out and talking about how you feel. This shows real maturity and self-awareness."
+                "You're braver than you believe and stronger than you feel. Keep going!",
+                "You've survived every hard day so far. That's 100% success rate!",
+                "You matter more than you know. Your presence makes a difference.",
+                "You're exactly where you need to be. Trust your journey.",
+                "Every small step forward is still progress. You're doing great!",
+                "You're more resilient than you realize. You've got this!",
+                "Your story isn't over. The best chapters may be yet to come.",
+                "You're worthy of love, respect, and kindness - especially from yourself.",
+                "You're doing better than you think. Give yourself credit.",
+                "You're not just surviving, you're growing. That takes courage.",
+                "You're a warrior with a gentle heart. That's a beautiful combination.",
+                "You're enough, exactly as you are. You don't need to be perfect."
             ],
-            coping: [
-                "Here are some strategies that have helped other students: deep breathing exercises, talking to trusted friends or family, maintaining a routine, getting enough sleep, staying connected with home, and finding small moments of joy each day. What sounds most manageable for you to try?",
-                "Some students find it helpful to journal their thoughts, practice mindfulness, engage in physical activity, listen to music, or find creative outlets. Others benefit from connecting with fellow students or maintaining cultural practices that bring comfort. What kinds of activities usually help you feel better?",
-                "Building a support network is really important. This could include trusted friends at ALU, family members back home, counselors, study groups, or even online communities. Having people who understand your experience can make a big difference. Who in your life makes you feel supported and understood?"
+            // NEW: Anger management and psychological questions
+            angerquestions: [
+                "Let's explore this together. On a scale of 1-10, how intense is your anger right now?",
+                "What physical sensations do you notice when you're angry? Tight chest? Clenched fists?",
+                "If your anger could speak, what would it say it needs right now?",
+                "When you were growing up, how did the adults around you handle anger?",
+                "What's the story you're telling yourself about this situation?",
+                "If you could rewind and respond differently, what would you do?",
+                "What would your best friend say about this situation if they were here?",
+                "What are three things you're grateful for right now, even while angry?",
+                "What's the underlying need that's not being met in this situation?",
+                "How do you think you'll feel about this situation tomorrow? Next week?",
+                "What would it mean if you let go of this anger right now?",
+                "What boundaries might need to be set to prevent this anger in the future?"
             ],
-            resources: [
-                "While I'm here to chat and provide support, please remember that ALU has counseling services available if you need more intensive help. Many universities also have support systems specifically for mental health.",
-                "If you ever feel like you're in crisis or having thoughts of self-harm, please reach out to a mental health professional, a trusted adult, or emergency services immediately. Your life has value and there are people who want to help.",
-                "Remember that seeking professional help is a sign of strength, not weakness. Therapists and counselors are trained to help with exactly the kinds of challenges you're facing. There's no shame in getting the support you deserve."
+            angercoping: [
+                "Try the 5-4-3-2-1 technique: Name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste.",
+                "Let's do progressive muscle relaxation: Tense your shoulders for 5 seconds, then release. Feel the difference.",
+                "Try this: Write down what you're angry about, then physically tear up the paper. How does that feel?",
+                "Go for a quick walk, even if it's just around the room. Movement helps process anger energy.",
+                "Try the 'STOP' technique: Stop, Take a breath, Observe your feelings, Proceed mindfully.",
+                "Splash cold water on your wrists or face. This activates your parasympathetic nervous system.",
+                "Try angry journaling: Write everything you feel without editing. No one will read it but you.",
+                "Do some physical exercise: Push-ups, jumping jacks, or stretch. Use that anger energy constructively.",
+                "Practice the '6-second rule': Intense anger chemicals last only 6 seconds. Count slowly to 6.",
+                "Call someone who makes you laugh. Laughter is anger's opposite and can shift your mood quickly.",
+                "Try the 'empty chair' technique: Imagine the person/situation in a chair and say what you need to say.",
+                "Practice self-compassion: Talk to yourself like you would to a good friend going through this."
+            ],
+            angermanagement: [
+                "Anger is information. It tells us something matters to us. What matters to you in this situation?",
+                "You have the power to choose your response. What response would make you proud later?",
+                "Anger often masks other emotions like hurt, fear, or sadness. What else might you be feeling?",
+                "This feeling will pass. You've felt angry before and gotten through it. You can do it again.",
+                "Your anger is valid, but you get to choose how to express it. What's a healthy way for you?",
+                "Sometimes anger protects us from feeling vulnerable. Is there something you're trying to protect?",
+                "You're not your anger. You're a person experiencing anger right now. There's a difference.",
+                "What would help you feel heard and understood right now?",
+                "Anger can be energy for positive change. How might you use this energy constructively?",
+                "Remember: You can't control others, but you can control your response. What response serves you?",
+                "It's okay to feel angry. It's not okay to hurt yourself or others. You're doing the right thing by talking about it.",
+                "This situation is temporary. Your response to it can build the person you want to become."
             ],
             crisis: [
-                "I'm very concerned about what you're sharing with me. While I want to support you, it sounds like you might need immediate professional help. Please consider reaching out to a mental health professional, counselor, or trusted adult right away. Your safety and well-being are the most important things.",
-                "What you're describing sounds really serious, and I want to make sure you get the right kind of help. Please consider contacting emergency services, a mental health professional, or someone you trust who can help you stay safe. You deserve support and care.",
-                "I'm worried about you and want to make sure you're safe. These feelings you're describing are serious, and while I'm here to listen, you may need more support than I can provide. Please reach out to a counselor, trusted friend, family member, or emergency services."
+                "I'm very concerned about you. Your life has immense value. Please reach out to someone immediately - a counselor, trusted adult, or emergency services.",
+                "What you're sharing is serious. You matter deeply. Please get immediate help from emergency services, a counselor, or someone you trust.",
+                "I'm worried about your safety. You deserve to be here. Please contact emergency services or a crisis helpline right away.",
+                "Your life is precious and irreplaceable. Please reach out for immediate help - emergency services, counselor, or trusted person.",
+                "I'm concerned for you. You're valued beyond measure. Please get immediate professional help or contact emergency services.",
+                "This sounds like a crisis. Your life matters. Please reach out to emergency services, counselor, or crisis hotline immediately.",
+                "I'm worried about you. You belong here. Please contact professional help, emergency services, or someone who can help right now.",
+                "Your safety is my biggest concern. You're important. Please get immediate help from emergency services or a trusted professional.",
+                "You matter so much. Please don't face this alone. Contact emergency services, counselor, or crisis hotline right away.",
+                "I care about you deeply. Please reach out for immediate help - emergency services, counselor, or someone you trust completely."
             ]
         };
         
         this.keywords = {
-            anxiety: ['anxious', 'anxiety', 'worried', 'nervous', 'panic', 'fear', 'scared', 'overwhelmed with worry', 'stress about exams', 'nervous about presentation'],
-            sadness: ['sad', 'sadness', 'depressed', 'down', 'low', 'crying', 'tears', 'heartbroken', 'miserable', 'unhappy', 'gloomy'],
-            stress: ['stress', 'stressed', 'pressure', 'overwhelmed', 'busy', 'exam', 'assignment', 'deadline', 'workload', 'too much work', 'academic pressure'],
-            depression: ['depression', 'depressed', 'hopeless', 'empty', 'numb', 'worthless', 'meaningless', 'dark', 'suicidal', 'want to die', 'end it all'],
-            loneliness: ['lonely', 'alone', 'isolated', 'disconnected', 'no friends', 'by myself', 'solitary', 'missing people', 'feel alone'],
-            academic: ['studies', 'school', 'university', 'grades', 'exam', 'test', 'assignment', 'academic', 'failing', 'alu', 'coursework', 'gpa'],
-            family: ['family', 'parents', 'mom', 'dad', 'home', 'expectations', 'pressure from family', 'disappointing family', 'family stress'],
-            financial: ['money', 'financial', 'fees', 'tuition', 'broke', 'poor', 'expensive', 'afford', 'paying for school', 'financial stress'],
-            future: ['future', 'career', 'job', 'graduation', 'after university', 'what next', 'uncertain about future', 'career prospects'],
-            homesickness: ['homesick', 'missing home', 'miss family', 'miss my country', 'want to go home', 'away from home'],
-            positive: ['good', 'great', 'happy', 'better', 'excellent', 'wonderful', 'amazing', 'fantastic', 'fine', 'doing well'],
-            greetings: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'muraho', 'bonjour'],
-            crisis: ['kill myself', 'end my life', 'suicide', 'want to die', 'not worth living', 'hurt myself', 'self harm', 'cutting']
+            anger: ['angry', 'anger', 'mad', 'furious', 'rage', 'pissed', 'irritated', 'frustrated', 'livid', 'annoyed', 'enraged', 'heated', 'fuming', 'outraged', 'aggressive', 'violent thoughts'],
+            anxiety: ['anxious', 'anxiety', 'worried', 'nervous', 'panic', 'fear', 'scared', 'overwhelmed', 'stress about exams', 'nervous about presentation', 'panicking', 'freaking out', 'worried sick'],
+            sadness: ['sad', 'sadness', 'depressed', 'down', 'low', 'crying', 'tears', 'heartbroken', 'miserable', 'unhappy', 'gloomy', 'upset', 'hurt', 'broken', 'devastated'],
+            stress: ['stress', 'stressed', 'pressure', 'overwhelmed', 'busy', 'exam', 'assignment', 'deadline', 'workload', 'too much work', 'academic pressure', 'pressured', 'overloaded', 'exhausted'],
+            depression: ['depression', 'depressed', 'hopeless', 'empty', 'numb', 'worthless', 'meaningless', 'dark', 'suicidal', 'want to die', 'end it all', 'no point', 'give up', 'nothing matters'],
+            loneliness: ['lonely', 'alone', 'isolated', 'disconnected', 'no friends', 'by myself', 'solitary', 'missing people', 'feel alone', 'nobody understands', 'no one cares', 'left out'],
+            happiness: ['happy', 'joy', 'joyful', 'excited', 'thrilled', 'amazing', 'wonderful', 'fantastic', 'great day', 'feeling good', 'awesome', 'brilliant', 'perfect', 'elated', 'cheerful'],
+            academic: ['studies', 'school', 'university', 'grades', 'exam', 'test', 'assignment', 'academic', 'failing', 'alu', 'coursework', 'gpa', 'studying', 'homework', 'professor'],
+            family: ['family', 'parents', 'mom', 'dad', 'home', 'expectations', 'pressure from family', 'disappointing family', 'family stress', 'mother', 'father', 'siblings', 'relatives'],
+            financial: ['money', 'financial', 'fees', 'tuition', 'broke', 'poor', 'expensive', 'afford', 'paying for school', 'financial stress', 'cost', 'budget', 'bills', 'debt'],
+            future: ['future', 'career', 'job', 'graduation', 'after university', 'what next', 'uncertain about future', 'career prospects', 'tomorrow', 'later', 'plans', 'goals'],
+            homesickness: ['homesick', 'missing home', 'miss family', 'miss my country', 'want to go home', 'away from home', 'miss mom', 'miss dad', 'home country', 'miss friends'],
+            positive: ['good', 'great', 'happy', 'better', 'excellent', 'wonderful', 'amazing', 'fantastic', 'fine', 'doing well', 'awesome', 'brilliant', 'perfect', 'blessed'],
+            greetings: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening', 'muraho', 'bonjour', 'howdy', 'what\'s up', 'how are you'],
+            thanks: ['thank you', 'thanks', 'grateful', 'appreciate', 'thankful', 'thank u', 'thx', 'much appreciated'],
+            help: ['help', 'need help', 'can you help', 'support', 'assistance', 'what should i do', 'advice', 'guidance', 'suggestions'],
+            comfort: ['need comfort', 'feel bad', 'hurt', 'pain', 'suffering', 'struggling', 'hard time', 'difficult', 'tough', 'challenging'],
+            // NEW: Keywords for anger management
+            angerwords: ['control anger', 'manage anger', 'anger management', 'calm down', 'cool off', 'losing temper', 'can\'t control', 'explosive', 'anger issues'],
+            crisis: ['kill myself', 'end my life', 'suicide', 'want to die', 'not worth living', 'hurt myself', 'self harm', 'cutting', 'overdose', 'jump', 'end everything']
         };
         
         this.init();
@@ -121,6 +389,8 @@ class AnonymousChatbot {
 
     init() {
         this.bindEvents();
+        this.bindDragEvents();
+        this.bindResizeEvents();
         this.loadPreviousChat();
     }
 
@@ -151,7 +421,7 @@ class AnonymousChatbot {
         const minimizeChat = document.getElementById('minimizeChat');
         if (minimizeChat) {
             minimizeChat.addEventListener('click', () => {
-                this.minimizeChat();
+                this.toggleMinimize();
             });
         }
 
@@ -197,6 +467,117 @@ class AnonymousChatbot {
         }
     }
 
+    bindDragEvents() {
+        const chatHeader = document.getElementById('chatHeader');
+        const chatWidget = document.getElementById('chatbot-widget');
+        
+        if (chatHeader && chatWidget) {
+            chatHeader.addEventListener('mousedown', (e) => {
+                // Don't start dragging if clicking on buttons
+                if (e.target.closest('.chat-btn') || e.target.closest('.size-btn')) {
+                    return;
+                }
+                
+                this.isDragging = true;
+                chatHeader.classList.add('dragging');
+                
+                const rect = chatWidget.getBoundingClientRect();
+                this.dragOffset.x = e.clientX - rect.left;
+                this.dragOffset.y = e.clientY - rect.top;
+                
+                document.addEventListener('mousemove', this.handleDrag.bind(this));
+                document.addEventListener('mouseup', this.handleDragEnd.bind(this));
+                
+                e.preventDefault();
+            });
+        }
+    }
+
+    handleDrag(e) {
+        if (!this.isDragging) return;
+        
+        const chatWidget = document.getElementById('chatbot-widget');
+        if (chatWidget) {
+            const newLeft = e.clientX - this.dragOffset.x;
+            const newTop = e.clientY - this.dragOffset.y;
+            
+            // Constrain to viewport
+            const maxLeft = window.innerWidth - chatWidget.offsetWidth;
+            const maxTop = window.innerHeight - chatWidget.offsetHeight;
+            
+            chatWidget.style.left = Math.max(0, Math.min(newLeft, maxLeft)) + 'px';
+            chatWidget.style.top = Math.max(0, Math.min(newTop, maxTop)) + 'px';
+            chatWidget.style.right = 'auto';
+            chatWidget.style.bottom = 'auto';
+        }
+    }
+
+    handleDragEnd() {
+        this.isDragging = false;
+        const chatHeader = document.getElementById('chatHeader');
+        if (chatHeader) {
+            chatHeader.classList.remove('dragging');
+        }
+        
+        document.removeEventListener('mousemove', this.handleDrag.bind(this));
+        document.removeEventListener('mouseup', this.handleDragEnd.bind(this));
+    }
+
+    bindResizeEvents() {
+        // Size control buttons
+        const sizeSmall = document.getElementById('sizeSmall');
+        const sizeMedium = document.getElementById('sizeMedium');
+        const sizeLarge = document.getElementById('sizeLarge');
+        const sizeFullscreen = document.getElementById('sizeFullscreen');
+        
+        if (sizeSmall) {
+            sizeSmall.addEventListener('click', () => this.setSize('small'));
+        }
+        if (sizeMedium) {
+            sizeMedium.addEventListener('click', () => this.setSize('medium'));
+        }
+        if (sizeLarge) {
+            sizeLarge.addEventListener('click', () => this.setSize('large'));
+        }
+        if (sizeFullscreen) {
+            sizeFullscreen.addEventListener('click', () => this.setSize('fullscreen'));
+        }
+    }
+
+    setSize(size) {
+        const chatWidget = document.getElementById('chatbot-widget');
+        if (!chatWidget) return;
+        
+        // Remove all size classes
+        chatWidget.classList.remove('size-small', 'size-medium', 'size-large', 'size-fullscreen');
+        
+        // Add new size class
+        chatWidget.classList.add(`size-${size}`);
+        this.currentSize = size;
+        
+        // Reset position for fullscreen
+        if (size === 'fullscreen') {
+            chatWidget.style.left = '';
+            chatWidget.style.top = '';
+            chatWidget.style.right = '';
+            chatWidget.style.bottom = '';
+        } else {
+            // Reset to bottom-right for other sizes
+            chatWidget.style.left = '';
+            chatWidget.style.top = '';
+            chatWidget.style.right = '20px';
+            chatWidget.style.bottom = '20px';
+        }
+        
+        // Scroll messages to bottom after resize
+        setTimeout(() => {
+            const messagesContainer = document.getElementById('chatMessages');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }, 100);
+    }
+
     toggleChat() {
         if (this.isOpen) {
             this.closeChat();
@@ -211,6 +592,10 @@ class AnonymousChatbot {
         
         if (widget && toggle) {
             widget.classList.add('active');
+            if (this.isMinimized) {
+                widget.classList.remove('minimized');
+                this.isMinimized = false;
+            }
             toggle.style.display = 'none';
             this.isOpen = true;
             
@@ -228,18 +613,34 @@ class AnonymousChatbot {
         
         if (widget && toggle) {
             widget.classList.remove('active');
+            widget.classList.remove('minimized');
             toggle.style.display = 'flex';
             this.isOpen = false;
+            this.isMinimized = false;
         }
     }
 
-    minimizeChat() {
-        this.closeChat();
+    toggleMinimize() {
+        const widget = document.getElementById('chatbot-widget');
+        if (!widget) return;
+        
+        if (this.isMinimized) {
+            widget.classList.remove('minimized');
+            this.isMinimized = false;
+            // Focus on input when unminimized
+            setTimeout(() => {
+                const input = document.getElementById('chatInput');
+                if (input) input.focus();
+            }, 100);
+        } else {
+            widget.classList.add('minimized');
+            this.isMinimized = true;
+        }
     }
 
     sendMessage() {
         const input = document.getElementById('chatInput');
-        if (!input || this.isTyping) return;
+        if (!input || this.isTyping || this.isMinimized) return;
         
         const message = input.value.trim();
         
@@ -269,7 +670,7 @@ class AnonymousChatbot {
                 this.suggestFollowUp(message);
             }, 2000);
             
-        }, 1500 + Math.random() * 1000); // Random delay between 1.5-2.5 seconds
+        }, 1500 + Math.random() * 1000);
     }
 
     addMessage(sender, content) {
@@ -344,11 +745,42 @@ class AnonymousChatbot {
             return this.getRandomResponse('crisis');
         }
         
+        // Check for anger-related responses
+        if (this.keywords.anger.some(keyword => lowerMessage.includes(keyword))) {
+            // If they mention anger management/control, provide coping strategies
+            if (this.keywords.angerwords.some(keyword => lowerMessage.includes(keyword))) {
+                return this.getRandomResponse('angercoping');
+            }
+            // Otherwise, provide general anger support
+            return this.getRandomResponse('anger');
+        }
+        
         // Check for specific categories
         for (const [category, keywords] of Object.entries(this.keywords)) {
-            if (category !== 'crisis' && keywords.some(keyword => lowerMessage.includes(keyword))) {
+            if (category !== 'crisis' && category !== 'anger' && category !== 'angerwords' && keywords.some(keyword => lowerMessage.includes(keyword))) {
                 return this.getRandomResponse(category);
             }
+        }
+        
+        // Check for specific patterns that need comfort or motivation
+        if (lowerMessage.includes('tired') || lowerMessage.includes('exhausted') || lowerMessage.includes('can\'t anymore')) {
+            return this.getRandomResponse('comfort');
+        }
+        
+        if (lowerMessage.includes('give up') || lowerMessage.includes('quit') || lowerMessage.includes('impossible')) {
+            return this.getRandomResponse('motivation');
+        }
+        
+        if (lowerMessage.includes('care for myself') || lowerMessage.includes('self care') || lowerMessage.includes('take care')) {
+            return this.getRandomResponse('selfcare');
+        }
+        
+        if (lowerMessage.includes('connect') || lowerMessage.includes('friends') || lowerMessage.includes('relationship')) {
+            return this.getRandomResponse('connection');
+        }
+        
+        if (lowerMessage.includes('hope') || lowerMessage.includes('better') || lowerMessage.includes('future')) {
+            return this.getRandomResponse('hope');
         }
         
         // Default to general response
@@ -365,16 +797,26 @@ class AnonymousChatbot {
         const lowerMessage = userMessage.toLowerCase();
         let followUp = '';
         
-        if (lowerMessage.includes('anxious') || lowerMessage.includes('stress')) {
-            followUp = "Would you like to try a quick breathing exercise, or would you prefer to talk more about what's causing these feelings?";
+        if (lowerMessage.includes('angry') || lowerMessage.includes('mad') || lowerMessage.includes('furious')) {
+            const angerFollowUps = [
+                "Would you like to try some anger management techniques, or do you want to explore what's behind this anger?",
+                "Let me ask you this: What would help you feel more in control right now?",
+                "Here's a question: If this anger could teach you something, what would it be?",
+                "Try this: Take 5 deep breaths and tell me what you notice in your body right now."
+            ];
+            followUp = angerFollowUps[Math.floor(Math.random() * angerFollowUps.length)];
+        } else if (lowerMessage.includes('anxious') || lowerMessage.includes('stress')) {
+            followUp = "Would you like some breathing exercises, or do you want to talk about what's causing these feelings?";
         } else if (lowerMessage.includes('sad') || lowerMessage.includes('down')) {
-            followUp = "Would it help to talk about what's been making you feel this way, or would you like some suggestions for self-care?";
+            followUp = "Would you like to share more about what's been making you feel this way, or would some self-care suggestions help?";
         } else if (lowerMessage.includes('lonely') || lowerMessage.includes('alone')) {
-            followUp = "Would you like to talk about ways to connect with others at ALU, or share more about what's making you feel isolated?";
+            followUp = "Would you like to talk about ways to connect with others, or share more about what's making you feel isolated?";
         } else if (lowerMessage.includes('family') || lowerMessage.includes('home')) {
-            followUp = "Family relationships can be complex, especially when you're at university. Would you like to talk more about managing these expectations?";
+            followUp = "Family relationships can be complex. Would you like to talk more about managing these expectations?";
         } else if (lowerMessage.includes('academic') || lowerMessage.includes('grades')) {
-            followUp = "Academic challenges are tough. Would you like to discuss specific study strategies or talk more about the pressure you're feeling?";
+            followUp = "Academic challenges are tough. Would you like to discuss strategies or talk more about the pressure you're feeling?";
+        } else if (lowerMessage.includes('happy') || lowerMessage.includes('good')) {
+            followUp = "I love hearing positive news! What's been the best part of your day?";
         }
         
         if (followUp) {
@@ -384,6 +826,23 @@ class AnonymousChatbot {
                 }
             }, 3000);
         }
+    }
+
+    // Add new method for anger-specific follow-ups
+    provideAngerSupport(userMessage) {
+        const lowerMessage = userMessage.toLowerCase();
+        
+        setTimeout(() => {
+            if (!this.isTyping) {
+                if (lowerMessage.includes('want to hurt') || lowerMessage.includes('want to hit')) {
+                    this.addMessage('bot', this.getRandomResponse('angermanagement'));
+                } else if (lowerMessage.includes('can\'t control') || lowerMessage.includes('losing it')) {
+                    this.addMessage('bot', this.getRandomResponse('angercoping'));
+                } else {
+                    this.addMessage('bot', this.getRandomResponse('angerquestions'));
+                }
+            }
+        }, 4000);
     }
 
     hideOptions() {
@@ -404,7 +863,7 @@ class AnonymousChatbot {
                             <i class="fas fa-heart"></i>
                         </div>
                         <div class="message-content">
-                            <p>Hello! I'm here to support you with mental health concerns. This conversation is completely anonymous and confidential. How are you feeling today?</p>
+                            <p>Hello! Welcome home to this safe space. I'm here to support you with any concerns. This conversation is completely anonymous and confidential. How are you feeling today?</p>
                             <span class="message-time">Just now</span>
                         </div>
                     </div>
@@ -422,7 +881,7 @@ class AnonymousChatbot {
     }
 
     saveConversation() {
-        if (this.messages.length === 0) {
+        if this.messages.length === 0) {
             alert('No conversation to save yet. Start chatting first!');
             return;
         }
@@ -430,8 +889,8 @@ class AnonymousChatbot {
         const conversationData = {
             messages: this.messages,
             exportDate: new Date().toISOString(),
-            note: "This conversation was exported from InsightIQ Anonymous Mental Health Support. All personal information remains anonymous.",
-            disclaimer: "This chat was with an AI assistant and is not a substitute for professional mental health care."
+            note: "This conversation was exported from InsightIQ Anonymous Wellness Support. All personal information remains anonymous.",
+            disclaimer: "This chat was with an AI assistant and is not a substitute for professional counseling or support services."
         };
         
         const dataStr = JSON.stringify(conversationData, null, 2);
@@ -439,7 +898,7 @@ class AnonymousChatbot {
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `mental_health_chat_${new Date().toISOString().split('T')[0]}.json`;
+        link.download = `wellness_chat_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
         URL.revokeObjectURL(url);
         alert('Conversation saved to your device. No data was sent to our servers - your privacy remains protected.');
@@ -470,7 +929,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new AnonymousChatbot();
     
     // Add some visual feedback
-    console.log('🤖 Anonymous Mental Health Chatbot initialized');
+    console.log('🤖 Anonymous Wellness Chatbot initialized');
     console.log('💚 Privacy-first design - no personal data collected');
-    console.log('🇷🇼 Supporting mental health in Rwanda');
+    console.log('🇷🇼 Supporting student wellbeing in Rwanda');
 });
